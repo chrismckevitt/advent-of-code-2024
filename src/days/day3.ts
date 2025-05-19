@@ -61,11 +61,7 @@ const part2 = (data: string) => {
         .reduce(add);
 };
 
-async function day3() {
-    const input = await Deno.readTextFile(
-        new URL("../input/day3.txt", import.meta.url),
-    );
-
+function day3(input: string) {
     console.log(`   
     Day 3: \n
     - 🎆️ Part 1: ${part1(input)}\n

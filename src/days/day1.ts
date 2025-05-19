@@ -13,11 +13,7 @@ const part2 = (data: DataDay1) =>
         (data[1].filter((rightCell) => rightCell === leftCell).length)
     ).reduce(add);
 
-async function day1() {
-    const input = await Deno.readTextFile(
-        new URL("../input/day1.json", import.meta.url),
-    );
-
+function day1(input: string) {
     const data: DataDay1 = JSON.parse(input);
 
     console.log(`   

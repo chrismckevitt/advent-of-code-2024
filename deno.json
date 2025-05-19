@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "start": "deno run --allow-read main.ts"
+    "start": "cd src && deno run --allow-read main.ts"
   },
   "imports": {}
 }

@@ -33,11 +33,7 @@ const part2 = (data: DataDay2) => {
     return safeReports.length + fixedReports.length;
 };
 
-async function day2() {
-    const input = await Deno.readTextFile(
-        new URL("../input/day2.json", import.meta.url),
-    );
-
+function day2(input: string) {
     const data: DataDay2 = JSON.parse(input);
 
     console.log(`   
