@@ -3,7 +3,11 @@
   "specifiers": {
     "jsr:@std/assert@*": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
+    "jsr:@std/async@*": "1.0.13",
+    "jsr:@std/fs@*": "1.0.18",
     "jsr:@std/internal@^1.0.6": "1.0.7",
+    "jsr:@std/path@*": "1.1.0",
+    "jsr:@std/path@^1.1.0": "1.1.0",
     "jsr:@std/yaml@*": "1.0.5"
   },
   "jsr": {
@@ -13,8 +17,20 @@
         "jsr:@std/internal"
       ]
     },
+    "@std/async@1.0.13": {
+      "integrity": "1d76ca5d324aef249908f7f7fe0d39aaf53198e5420604a59ab5c035adc97c96"
+    },
+    "@std/fs@1.0.18": {
+      "integrity": "24bcad99eab1af4fde75e05da6e9ed0e0dce5edb71b7e34baacf86ffe3969f3a",
+      "dependencies": [
+        "jsr:@std/path@^1.1.0"
+      ]
+    },
     "@std/internal@1.0.7": {
       "integrity": "39eeb5265190a7bc5d5591c9ff019490bd1f2c3907c044a11b0d545796158a0f"
+    },
+    "@std/path@1.1.0": {
+      "integrity": "ddc94f8e3c275627281cbc23341df6b8bcc874d70374f75fec2533521e3d6886"
     },
     "@std/yaml@1.0.5": {
       "integrity": "71ba3d334305ee2149391931508b2c293a8490f94a337eef3a09cade1a2a2742"

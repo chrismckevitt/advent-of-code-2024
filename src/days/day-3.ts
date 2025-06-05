@@ -4,26 +4,26 @@ import { subtract } from "../utils/subtract/subtract.ts";
 import { parseOperation } from "../utils/parse-operation/parse-operation.ts";
 import { Toggle } from "../types/toggle.ts";
 import { Operands } from "../types/operands.ts";
-import { ARITHMETIC_OPERATION_REGEX } from "../regexes/arithmetic-operation.ts";
+import { MULTIPLY_REGEX } from "../regexes/multiply.ts";
 import { ENABLE_REGEX } from "../regexes/enable.ts";
 import { DISABLE_REGEX } from "../regexes/disable.ts";
 
 const part1 = (data: string): number =>
-  data.match(ARITHMETIC_OPERATION_REGEX)?.map((
+  data.match(MULTIPLY_REGEX)?.map((
     operation,
   ) => parseOperation(operation)).flatMap((operands) =>
     operands.reduce(multiply)
   )
     .reduce(add) ?? 0;
 
-const part2 = (data: string) => {
+function part2(data: string) {
   const operands: Operands[] = [];
   let enabled = true;
   let startIndex = 0;
 
   let operationMatches: RegExpMatchArray | null;
   while (
-    (operationMatches = ARITHMETIC_OPERATION_REGEX.exec(data)) !== null
+    (operationMatches = MULTIPLY_REGEX.exec(data)) !== null
   ) {
     const toggleSearch = data.slice(startIndex, operationMatches.index);
     const toggles: Toggle[] = [];
@@ -60,12 +60,12 @@ const part2 = (data: string) => {
       operands.push(parseOperation(operationMatches[0]));
     }
 
-    startIndex = ARITHMETIC_OPERATION_REGEX.lastIndex;
+    startIndex = MULTIPLY_REGEX.lastIndex;
   }
 
   return operands.flatMap((operands) => operands.reduce(multiply))
     .reduce(add);
-};
+}
 
 function day3(input: string) {
   console.log(`   

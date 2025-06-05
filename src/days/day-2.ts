@@ -1,12 +1,12 @@
 import { isAscending } from "../utils/is-ascending/is-ascending.ts";
 import { isDescending } from "../utils/is-descending/is-descending.ts";
-import { DataDay2 } from "../types/day-2-data.ts";
+import { Report } from "../types/report.ts";
 
-const safeReports: DataDay2 = [];
-const fixedReports: DataDay2 = [];
-const unsafeReports: DataDay2 = [];
+const safeReports: Report[] = [];
+const fixedReports: Report[] = [];
+const unsafeReports: Report[] = [];
 
-const part1 = (data: DataDay2) => {
+function part1(data: Report[]) {
   for (let i = 0; i < data.length; i++) {
     if (isDescending(data[i]) || isAscending(data[i])) {
       safeReports.push(data[i]);
@@ -17,9 +17,9 @@ const part1 = (data: DataDay2) => {
   }
 
   return safeReports.length;
-};
+}
 
-const part2 = (data: DataDay2) => {
+function part2(data: Report[]) {
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < data[i].length; j++) {
       const testReport = data[i].toSpliced(j, 1);
@@ -32,10 +32,10 @@ const part2 = (data: DataDay2) => {
   }
 
   return safeReports.length + fixedReports.length;
-};
+}
 
 function day2(input: string) {
-  const data: DataDay2 = JSON.parse(input);
+  const data: Report[] = JSON.parse(input);
 
   console.log(`   
     Day 2: \n
