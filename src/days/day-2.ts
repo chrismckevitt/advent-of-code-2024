@@ -1,6 +1,7 @@
 import { isAscending } from "../utils/is-ascending/is-ascending.ts";
 import { isDescending } from "../utils/is-descending/is-descending.ts";
-import { Report } from "../types/report.ts";
+
+type Report = number[];
 
 const safeReports: Report[] = [];
 const fixedReports: Report[] = [];

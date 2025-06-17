@@ -1,6 +1,6 @@
 import { assertEquals } from "jsr:@std/assert";
 
-import { getCols } from "./getCols.ts";
+import { getCols } from "./get-cols.ts";
 
 Deno.test("getCols", () => {
   const grid1 = [

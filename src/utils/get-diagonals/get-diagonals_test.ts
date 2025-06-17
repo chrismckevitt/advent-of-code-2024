@@ -1,6 +1,6 @@
 import { assertEquals } from "jsr:@std/assert";
 
-import { getDiagonals } from "./getDiagonals.ts";
+import { getDiagonals } from "./get-diagonals.ts";
 
 Deno.test("getDiagonals", () => {
   const grid1 = [

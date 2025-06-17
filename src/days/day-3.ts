@@ -2,8 +2,6 @@ import { add } from "../utils/add/add.ts";
 import { multiply } from "../utils/multiply/multiply.ts";
 import { subtract } from "../utils/subtract/subtract.ts";
 import { parseOperation } from "../utils/parse-operation/parse-operation.ts";
-import { Toggle } from "../types/toggle.ts";
-import { Operands } from "../types/operands.ts";
 import { MULTIPLY_REGEX } from "../regexes/multiply.ts";
 import { ENABLE_REGEX } from "../regexes/enable.ts";
 import { DISABLE_REGEX } from "../regexes/disable.ts";
@@ -16,8 +14,13 @@ const part1 = (data: string): number =>
   )
     .reduce(add) ?? 0;
 
+interface Toggle {
+  index: number | undefined;
+  enabled: boolean;
+}
+
 function part2(data: string) {
-  const operands: Operands[] = [];
+  const operands: [number, number][] = [];
   let enabled = true;
   let startIndex = 0;
 

@@ -1,6 +1,4 @@
-import { Operands } from "../../types/operands.ts";
-
-export const parseOperation = (operation: string): Operands => [
+export const parseOperation = (operation: string): [number, number] => [
   Number.parseInt(
     operation.slice(
       operation.indexOf("(") + 1,
