@@ -1,10 +1,24 @@
 import { add } from "../utils/add/add.ts";
 import { multiply } from "../utils/multiply/multiply.ts";
 import { subtract } from "../utils/subtract/subtract.ts";
-import { parseOperation } from "../utils/parse-operation/parse-operation.ts";
 import { MULTIPLY_REGEX } from "../regexes/multiply.ts";
 import { ENABLE_REGEX } from "../regexes/enable.ts";
 import { DISABLE_REGEX } from "../regexes/disable.ts";
+
+const parseOperation = (operation: string): [number, number] => [
+  Number.parseInt(
+    operation.slice(
+      operation.indexOf("(") + 1,
+      operation.indexOf(","),
+    ),
+  ),
+  Number.parseInt(
+    operation.slice(
+      operation.indexOf(",") + 1,
+      operation.indexOf(")"),
+    ),
+  ),
+];
 
 const part1 = (data: string): number =>
   data.match(MULTIPLY_REGEX)?.map((

@@ -1,9 +1,58 @@
 import { add } from "../utils/add/add.ts";
-import { getDiagonals } from "../utils/get-diagonals/get-diagonals.ts";
 import { SAM_MAS_REGEX, XMAS_REGEX } from "../regexes/xmas.ts";
-import { getCols } from "../utils/get-cols/get-cols.ts";
-import { getGridSize } from "../utils/get-grid-size/get-grid-size.ts";
-import { getGrid } from "../utils/get-grid/getGrid.ts";
+
+const getGridSize = (grid: string[][]) => ({
+  rowLength: grid.length,
+  colLength: grid[0].length,
+});
+
+function getGrid(input: string) {
+  const rows = input.trim().split(/\n/);
+
+  const grid = rows
+    .map((row) => row.split(""));
+
+  return { rows, grid };
+}
+
+function getCols(grid: string[][]) {
+  const { rowLength, colLength } = getGridSize(grid);
+  const col: string[][] = [];
+
+  for (let i = 0; i < colLength; i++) {
+    col[i] = [];
+    for (let j = 0; j < rowLength; j++) {
+      col[i].push(grid[j][i]);
+    }
+  }
+
+  return col.map((row) => row.join(""));
+}
+
+function getDiagonals(grid: string[][]) {
+  const { rowLength, colLength } = getGridSize(grid);
+  const allDiagonals: [string[][], string[][]] = [[], []];
+
+  // Top row
+  for (let start = 0; start < colLength; start++) {
+    allDiagonals[0][start] = [];
+    for (let i = 0; i + start < colLength && i < rowLength; i++) {
+      allDiagonals[0][start].push(grid[i][i + start]);
+    }
+  }
+
+  // Left col, row offset by 1
+  for (let start = 1; start < rowLength; start++) {
+    allDiagonals[1][start - 1] = [];
+    for (let i = 0; i + start < rowLength && i < colLength; i++) {
+      allDiagonals[1][start - 1].push(grid[start + i][i]);
+    }
+  }
+
+  return allDiagonals.flatMap((diagonals) =>
+    diagonals.map((diagonal) => diagonal.join(""))
+  );
+}
 
 const part1 = (data: string) =>
   (({ rows, grid }) => [

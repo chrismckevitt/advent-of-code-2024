@@ -1,7 +1,36 @@
-import { isAscending } from "../utils/is-ascending/is-ascending.ts";
-import { isDescending } from "../utils/is-descending/is-descending.ts";
-
 type Report = number[];
+
+function isWithinTolerance(larger: number, smaller: number) {
+  const difference = larger - smaller;
+
+  return difference >= 0 && difference <= 3;
+}
+
+function isAscending(range: number[]) {
+  for (let i = 0; i < range.length - 1; i++) {
+    if (
+      range[i] < range[i + 1] &&
+      isWithinTolerance(range[i + 1], range[i])
+    ) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
+
+function isDescending(range: number[]) {
+  for (let i = 0; i < range.length - 1; i++) {
+    if (
+      range[i] > range[i + 1] &&
+      isWithinTolerance(range[i], range[i + 1])
+    ) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
 
 const safeReports: Report[] = [];
 const fixedReports: Report[] = [];
