@@ -5,23 +5,17 @@ import { getCols } from "../utils/get-cols/get-cols.ts";
 import { getGridSize } from "../utils/get-grid-size/get-grid-size.ts";
 import { getGrid } from "../utils/get-grid/getGrid.ts";
 
-function part1(data: string) {
-  const { rows, grid } = getGrid(data);
-
-  const diagonalsDown = getDiagonals(grid);
-  const diagonalsUp = getDiagonals(grid.map((row) => [...row].reverse()));
-  const cols = getCols(grid);
-
-  return [
+const part1 = (data: string) =>
+  (({ rows, grid }) => [
     rows,
-    cols,
-    diagonalsDown,
-    diagonalsUp,
-  ].flatMap((cases) =>
-    cases.map((string) => [...string.matchAll(XMAS_REGEX)].length)
-  )
+    getCols(grid),
+    getDiagonals(grid),
+    getDiagonals(grid.map((row) => [...row].reverse())),
+  ])(getGrid(data))
+    .flatMap((cases): number[] =>
+      cases.map((string) => [...string.matchAll(XMAS_REGEX)].length)
+    )
     .reduce(add);
-}
 
 function part2(data: string) {
   const { grid } = getGrid(data);
