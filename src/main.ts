@@ -2,6 +2,7 @@ import day1 from "./days/day-1.ts";
 import day2 from "./days/day-2.ts";
 import day3 from "./days/day-3.ts";
 import day4 from "./days/day-4.ts";
+import day5 from "./days/day-5.ts";
 
 // Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
 if (import.meta.main) {
@@ -30,4 +31,6 @@ if (import.meta.main) {
   );
 
   day4(day4Input);
+
+  day5("x");
 }
