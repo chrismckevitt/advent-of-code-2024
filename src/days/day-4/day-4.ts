@@ -1,21 +1,23 @@
-import { add } from "../utils/add/add.ts";
-import { SAM_MAS_REGEX, XMAS_REGEX } from "../regexes/xmas.ts";
+import { add } from "../../utils/add/add.ts";
+import { SAM_MAS_REGEX, XMAS_REGEX } from "../../regexes/xmas.ts";
 
-const getGridSize = (grid: string[][]) => ({
+const getGridSize = (
+  grid: string[][],
+): { rowLength: number; colLength: number } => ({
   rowLength: grid.length,
   colLength: grid[0].length,
 });
 
-function getGrid(input: string) {
+const getGrid = (input: string): { grid: string[][]; rows: string[] } => {
   const rows = input.trim().split(/\n/);
 
   const grid = rows
     .map((row) => row.split(""));
 
   return { rows, grid };
-}
+};
 
-function getCols(grid: string[][]) {
+const getCols = (grid: string[][]): string[] => {
   const { rowLength, colLength } = getGridSize(grid);
   const col: string[][] = [];
 
@@ -27,9 +29,9 @@ function getCols(grid: string[][]) {
   }
 
   return col.map((row) => row.join(""));
-}
+};
 
-function getDiagonals(grid: string[][]) {
+const getDiagonals = (grid: string[][]): string[] => {
   const { rowLength, colLength } = getGridSize(grid);
   const allDiagonals: [string[][], string[][]] = [[], []];
 
@@ -52,9 +54,9 @@ function getDiagonals(grid: string[][]) {
   return allDiagonals.flatMap((diagonals) =>
     diagonals.map((diagonal) => diagonal.join(""))
   );
-}
+};
 
-const part1 = (data: string) =>
+export const part1 = (data: string): number =>
   (({ rows, grid }) => [
     rows,
     getCols(grid),
@@ -64,9 +66,9 @@ const part1 = (data: string) =>
     .flatMap((cases): number[] =>
       cases.map((string) => [...string.matchAll(XMAS_REGEX)].length)
     )
-    .reduce(add);
+    .reduce(add, 0);
 
-function part2(data: string) {
+export const part2 = (data: string): number => {
   const { grid } = getGrid(data);
   const { rowLength, colLength } = getGridSize(grid);
 
@@ -89,9 +91,9 @@ function part2(data: string) {
   }
 
   return matchCount;
-}
+};
 
-function day4(input: string) {
+function day4(input: string): void {
   console.log(`   
     Day 4: \n
     - 💒️ Part 1: ${part1(input)}\n

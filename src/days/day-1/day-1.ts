@@ -1,20 +1,20 @@
-import { add } from "../utils/add/add.ts";
-import { subtract } from "../utils/subtract/subtract.ts";
+import { add } from "../../utils/add/add.ts";
+import { subtract } from "../../utils/subtract/subtract.ts";
 
 export type Data = [number[], number[]];
 
-const part1 = (data: Data) =>
+export const part1 = (data: Data): number =>
   [...data[0]].sort().map((leftCell, i) =>
     [leftCell, [...data[1]].sort()[i]].sort().reverse().reduce(subtract)
   ).reduce(add);
 
-const part2 = (data: Data) =>
+export const part2 = (data: Data): number =>
   data[0].map((leftCell) =>
     leftCell *
     (data[1].filter((rightCell) => rightCell === leftCell).length)
   ).reduce(add);
 
-function day1(input: string) {
+function day1(input: string): void {
   const data: Data = JSON.parse(input);
 
   console.log(`   

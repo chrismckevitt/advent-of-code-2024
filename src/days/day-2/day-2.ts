@@ -1,42 +1,44 @@
-type Report = number[];
+export type Report = number[];
 
-function isWithinTolerance(larger: number, smaller: number) {
+const isWithinTolerance = (
+  { larger, smaller }: { larger: number; smaller: number },
+): boolean => {
   const difference = larger - smaller;
 
   return difference >= 0 && difference <= 3;
-}
+};
 
-function isAscending(range: number[]) {
+const isAscending = (range: number[]): boolean => {
   for (let i = 0; i < range.length - 1; i++) {
     if (
       range[i] < range[i + 1] &&
-      isWithinTolerance(range[i + 1], range[i])
+      isWithinTolerance({ larger: range[i + 1], smaller: range[i] })
     ) {
       continue;
     }
     return false;
   }
   return true;
-}
+};
 
-function isDescending(range: number[]) {
+const isDescending = (range: number[]): boolean => {
   for (let i = 0; i < range.length - 1; i++) {
     if (
       range[i] > range[i + 1] &&
-      isWithinTolerance(range[i], range[i + 1])
+      isWithinTolerance({ larger: range[i], smaller: range[i + 1] })
     ) {
       continue;
     }
     return false;
   }
   return true;
-}
+};
 
 const safeReports: Report[] = [];
 const fixedReports: Report[] = [];
 const unsafeReports: Report[] = [];
 
-function part1(data: Report[]) {
+export const part1 = (data: Report[]): number => {
   for (let i = 0; i < data.length; i++) {
     if (isDescending(data[i]) || isAscending(data[i])) {
       safeReports.push(data[i]);
@@ -47,9 +49,9 @@ function part1(data: Report[]) {
   }
 
   return safeReports.length;
-}
+};
 
-function part2(data: Report[]) {
+export const part2 = (data: Report[]): number => {
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < data[i].length; j++) {
       const testReport = data[i].toSpliced(j, 1);
@@ -62,9 +64,9 @@ function part2(data: Report[]) {
   }
 
   return safeReports.length + fixedReports.length;
-}
+};
 
-function day2(input: string) {
+function day2(input: string): void {
   const data: Report[] = JSON.parse(input);
 
   console.log(`   
