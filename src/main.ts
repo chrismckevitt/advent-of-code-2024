@@ -3,7 +3,6 @@ import day2 from "./puzzles/day-2/day-2.ts";
 import day3 from "./puzzles/day-3/day-3.ts";
 import day4 from "./puzzles/day-4/day-4.ts";
 import day5 from "./puzzles/day-5/day-5.ts";
-import { cconsole } from "./utils/cconsole/cconsole.ts";
 
 type Puzzle = (input: string) => void;
 
@@ -26,13 +25,12 @@ if (import.meta.main) {
 
 async function run(
   puzzle: Puzzle,
-  filepath: string
+  filepath: string,
 ) {
   const input = await getInput(filepath);
   if (!input) return;
   puzzle(input);
-
-};
+}
 
 async function getInput(filepath: string) {
   try {
@@ -42,6 +40,8 @@ async function getInput(filepath: string) {
 
     return input;
   } catch (error) {
-    cconsole.error(`Error reading file "${filepath}"\n${JSON.stringify(error, null, 2)}\n`);
+    console.error(
+      `Error reading file "${filepath}"\n${JSON.stringify(error, null, 2)}\n`,
+    );
   }
 }

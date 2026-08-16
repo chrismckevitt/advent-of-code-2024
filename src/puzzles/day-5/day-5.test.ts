@@ -1,9 +1,6 @@
 import { assertEquals } from "jsr:@std/assert";
 
-import {
-  part1,
-  part2,
-} from "./day-5.ts";
+import { part1, part2 } from "./day-5.ts";
 
 const TEST_INPUT = `47|53
 97|13
