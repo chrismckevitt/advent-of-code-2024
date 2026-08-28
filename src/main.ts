@@ -28,7 +28,10 @@ async function run(
   filepath: string,
 ) {
   const input = await getInput(filepath);
-  if (!input) return;
+  if (!input) {
+    console.log(`No input for ${filepath}`)
+    return;
+  };
   puzzle(input);
 }
 

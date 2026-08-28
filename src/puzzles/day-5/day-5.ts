@@ -6,14 +6,14 @@ type Update = number[];
 
 export function day5(input: string) {
   console.log(`
-    Day 5:
-    - 🏖️️ Part 1: ${part1(input)}
-    - 🍺️ Part 2: ${part2(input)}
+    Day 5:\n
+    - 🏖️️ Part 1: ${part1(input)}\n
+    - 🍺️ Part 2: ${part2(input)}\n
   `);
 }
 
 export function part1(input: string): number {
-  const rows = input.split("\n");
+  const rows = input.trim().split("\n");
   const [ruleRows, updateRows] = splitByDelimiter(rows, "");
 
   const rules = ruleRows.map(parseRule);
@@ -33,45 +33,33 @@ export function part2(input: string): number {
   const rules = ruleRows.map(parseRule);
   const updates = updateRows.map(parseUpdate);
   const invalid = updates.filter((update) => updateIsNotValid(update, rules));
-  const fixed = invalid.map((update) => fixUpdate(update, rules));
 
-  return fixed
+  return invalid.map((update) => {
+   return update.toSorted((a, b) => {
+      return 0
+    })
+  })
     .map(getMiddleItem)
     .reduce(add, 0);
 }
 
 // --- Core Logic ---
-function fixUpdate(update: Update, rules: Rule[]): Update {
-  const failing = getFailingRules(rules, update);
-
-  swapRuleInPlace: while (updateIsNotValid(update, rules)) {
-    for (const rule of failing) {
-      swapRule(rule, update);
-      if (updateIsValid(update, rules)) {
-        break swapRuleInPlace;
-      }
-    }
-  }
-
-  return update;
-}
-
 function updateIsValid(update: Update, rules: Rule[]): boolean {
   const applicableRules = getApplicableRules(update, rules);
-  return applicableRules.every((rule) => ruleIsOk(rule, update));
+  return applicableRules.every((rule) => rulePasses(rule, update));
 }
 
 function updateIsNotValid(update: Update, rules: Rule[]): boolean {
   const applicableRules = getApplicableRules(update, rules);
 
-  return applicableRules.some((rule) => ruleIsNotOk(rule, update));
+  return applicableRules.some((rule) => ruleFails(rule, update));
 }
 
-function ruleIsNotOk(rule: Rule, update: Update): boolean {
+function ruleFails(rule: Rule, update: Update): boolean {
   return update.indexOf(rule.before) > update.indexOf(rule.after);
 }
 
-function ruleIsOk(rule: Rule, update: Update): boolean {
+function rulePasses(rule: Rule, update: Update): boolean {
   return update.indexOf(rule.before) < update.indexOf(rule.after);
 }
 
@@ -85,7 +73,7 @@ function getFailingRules(rules: Rule[], update: Update): Rule[] {
   const applicableRules = getApplicableRules(update, rules);
 
   return applicableRules.filter((rule) => {
-    return ruleIsNotOk(rule, update);
+    return ruleFails(rule, update);
   });
 }
 
@@ -94,20 +82,6 @@ function getRuleIndices(rule: Rule, update: Update): RuleIndices {
     before: update.indexOf(rule.before),
     after: update.indexOf(rule.after),
   };
-}
-
-function swapRule(rule: Rule, update: Update): void {
-  const indices = getRuleIndices(rule, update);
-
-  // Source - https://stackoverflow.com/a/872317
-  // Posted by tvanfosson, modified by community. See post 'Timeline' for change history
-  // Retrieved 2026-08-16, License - CC BY-SA 4.0
-
-  // [arr[0], arr[1]] = [arr[1], arr[0]];
-  [update[indices.before], update[indices.after]] = [
-    update[indices.after],
-    update[indices.before],
-  ];
 }
 
 // --- Parsing ---
