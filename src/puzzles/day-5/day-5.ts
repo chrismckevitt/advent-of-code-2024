@@ -34,13 +34,7 @@ export function part2(input: string): number {
   const updates = updateRows.map(parseUpdate);
   const invalid = updates.filter((update) => updateIsNotValid(update, rules));
 
-  const fixed = invalid.map((update) =>
-    update.sort((a, b) => {
-      const slice = [a, b] satisfies Slice;
-      const rule = getSliceRule(slice, rules);
-      return compare(slice, rule);
-    })
-  );
+  const fixed = invalid.map((update) => sortUpdate(update, rules));
 
   return fixed.map(getMiddleItem)
     .reduce(add, 0);
@@ -69,18 +63,12 @@ function rulePasses(rule: Rule, update: Update): boolean {
   return update.indexOf(rule.before) < update.indexOf(rule.after);
 }
 
-function getApplicableRules(update: Update, rules: Rule[]): Rule[] {
-  return rules.filter((rule) =>
-    update.includes(rule.before) && update.includes(rule.after)
-  );
-}
-
-function getSliceRule(slice: Slice, rules: Rule[]): Rule {
-  const applicable = getApplicableRules(slice, rules);
-  if (applicable.length !== 1) {
-    throw new Error(`Multiple rules found for slice ${JSON.stringify(slice)}`);
-  }
-  return applicable[0];
+function sortUpdate(update: Update, rules: Rule[]) {
+  return update.sort((a, b) => {
+    const slice = [a, b] satisfies Slice;
+    const rule = getSliceRule(slice, rules);
+    return compare(slice, rule);
+  });
 }
 
 function compare(slice: Slice, rule: Rule) {
@@ -124,6 +112,20 @@ function splitByDelimiter(
   );
 
   return [left, right];
+}
+
+function getApplicableRules(update: Update, rules: Rule[]): Rule[] {
+  return rules.filter((rule) =>
+    update.includes(rule.before) && update.includes(rule.after)
+  );
+}
+
+function getSliceRule(slice: Slice, rules: Rule[]): Rule {
+  const applicable = getApplicableRules(slice, rules);
+  if (applicable.length !== 1) {
+    throw new Error(`Multiple rules found for slice ${JSON.stringify(slice)}`);
+  }
+  return applicable[0];
 }
 
 export default day5;
