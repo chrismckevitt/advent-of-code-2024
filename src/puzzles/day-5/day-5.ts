@@ -1,8 +1,8 @@
 import { add } from "../../utils/add/add.ts";
 
 type Rule = { before: number; after: number };
-type RuleIndices = { before: number; after: number };
 type Update = number[];
+type Slice = [number, number]
 
 export function day5(input: string) {
   console.log(`
@@ -34,25 +34,30 @@ export function part2(input: string): number {
   const updates = updateRows.map(parseUpdate);
   const invalid = updates.filter((update) => updateIsNotValid(update, rules));
 
-  return invalid.map((update) => {
-   return update.toSorted((a, b) => {
-      return 0
-    })
-  })
-    .map(getMiddleItem)
+  const fixed = invalid.map((update) => update.sort((a, b) => {
+      const slice = [a, b] satisfies Slice;
+      const rule = getSliceRule(slice, rules);
+      return compare(slice, rule)
+    }));
+
+  return fixed.map(getMiddleItem)
     .reduce(add, 0);
+
+
+  return 0;
 }
 
 // --- Core Logic ---
 function updateIsValid(update: Update, rules: Rule[]): boolean {
-  const applicableRules = getApplicableRules(update, rules);
-  return applicableRules.every((rule) => rulePasses(rule, update));
+  const applicable = getApplicableRules(update, rules);
+
+  return applicable.every((rule) => rulePasses(rule, update));
 }
 
 function updateIsNotValid(update: Update, rules: Rule[]): boolean {
-  const applicableRules = getApplicableRules(update, rules);
+  const applicable = getApplicableRules(update, rules);
 
-  return applicableRules.some((rule) => ruleFails(rule, update));
+  return applicable.some((rule) => ruleFails(rule, update));
 }
 
 function ruleFails(rule: Rule, update: Update): boolean {
@@ -69,19 +74,16 @@ function getApplicableRules(update: Update, rules: Rule[]): Rule[] {
   );
 }
 
-function getFailingRules(rules: Rule[], update: Update): Rule[] {
-  const applicableRules = getApplicableRules(update, rules);
-
-  return applicableRules.filter((rule) => {
-    return ruleFails(rule, update);
-  });
+function getSliceRule(slice: Slice, rules: Rule[]): Rule {
+  const applicable = getApplicableRules(slice, rules);
+  if (applicable.length !== 1) throw new Error(`Multiple rules found for slice ${JSON.stringify(slice)}`)
+  return applicable[0];
 }
 
-function getRuleIndices(rule: Rule, update: Update): RuleIndices {
-  return {
-    before: update.indexOf(rule.before),
-    after: update.indexOf(rule.after),
-  };
+function compare(slice: Slice, rule: Rule) {
+  if (rulePasses(rule, slice)) return 1;
+  if (ruleFails(rule, slice)) return -1;
+  return 0;
 }
 
 // --- Parsing ---
@@ -96,8 +98,8 @@ function parseUpdate(row: string): Update {
 
 // --- Utilities ---
 function getMiddleItem<Item>(items: Item[]): Item {
-  const middleIndex = Math.floor(items.length / 2);
-  return items[middleIndex];
+  const middle = Math.floor(items.length / 2);
+  return items[middle];
 }
 
 function splitByDelimiter(
