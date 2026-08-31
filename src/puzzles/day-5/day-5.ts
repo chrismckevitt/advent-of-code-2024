@@ -2,7 +2,7 @@ import { add } from "../../utils/add/add.ts";
 
 type Rule = { before: number; after: number };
 type Update = number[];
-type Slice = [number, number]
+type Slice = [number, number];
 
 export function day5(input: string) {
   console.log(`
@@ -34,15 +34,16 @@ export function part2(input: string): number {
   const updates = updateRows.map(parseUpdate);
   const invalid = updates.filter((update) => updateIsNotValid(update, rules));
 
-  const fixed = invalid.map((update) => update.sort((a, b) => {
+  const fixed = invalid.map((update) =>
+    update.sort((a, b) => {
       const slice = [a, b] satisfies Slice;
       const rule = getSliceRule(slice, rules);
-      return compare(slice, rule)
-    }));
+      return compare(slice, rule);
+    })
+  );
 
   return fixed.map(getMiddleItem)
     .reduce(add, 0);
-
 
   return 0;
 }
@@ -76,7 +77,9 @@ function getApplicableRules(update: Update, rules: Rule[]): Rule[] {
 
 function getSliceRule(slice: Slice, rules: Rule[]): Rule {
   const applicable = getApplicableRules(slice, rules);
-  if (applicable.length !== 1) throw new Error(`Multiple rules found for slice ${JSON.stringify(slice)}`)
+  if (applicable.length !== 1) {
+    throw new Error(`Multiple rules found for slice ${JSON.stringify(slice)}`);
+  }
   return applicable[0];
 }
 

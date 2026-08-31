@@ -6,7 +6,7 @@ import day5 from "./puzzles/day-5/day-5.ts";
 
 type Solver = (input: string) => void;
 
-  const SOLUTIONS = {
+const SOLUTIONS = {
   day1: [day1, "../input/day-1.json"],
   day2: [day2, "../input/day-2.json"],
   day3: [day3, "../input/day-3.txt"],
