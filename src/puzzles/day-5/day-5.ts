@@ -38,8 +38,6 @@ export function part2(input: string): number {
 
   return fixed.map(getMiddleItem)
     .reduce(add, 0);
-
-  return 0;
 }
 
 // --- Core Logic ---
