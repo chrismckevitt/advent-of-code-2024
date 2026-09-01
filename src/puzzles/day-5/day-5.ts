@@ -32,9 +32,9 @@ export function part2(input: string): number {
 
   const rules = ruleRows.map(parseRule);
   const updates = updateRows.map(parseUpdate);
-  const invalid = updates.filter((update) => updateIsNotValid(update, rules));
 
-  const fixed = invalid.map((update) => sortUpdate(update, rules));
+  const invalid = updates.filter((update) => updateIsNotValid(update, rules));
+  const fixed = invalid.map((update) => fixUpdate(update, rules));
 
   return fixed.map(getMiddleItem)
     .reduce(add, 0);
@@ -43,6 +43,21 @@ export function part2(input: string): number {
 }
 
 // --- Core Logic ---
+function fixUpdate(update: Update, rules: Rule[]): Update {
+  return update.toSorted((a, b) => fixSlice([a, b], rules));
+}
+
+function fixSlice(slice: Slice, rules: Rule[]) {
+  const rule = getSliceRule(slice, rules);
+  return compare(slice, rule);
+}
+
+function compare(slice: Slice, rule: Rule) {
+  if (rulePasses(rule, slice)) return 1;
+  if (ruleFails(rule, slice)) return -1;
+  return 0;
+}
+
 function updateIsValid(update: Update, rules: Rule[]): boolean {
   const applicable = getApplicableRules(update, rules);
 
@@ -61,20 +76,6 @@ function ruleFails(rule: Rule, update: Update): boolean {
 
 function rulePasses(rule: Rule, update: Update): boolean {
   return update.indexOf(rule.before) < update.indexOf(rule.after);
-}
-
-function sortUpdate(update: Update, rules: Rule[]) {
-  return update.sort((a, b) => {
-    const slice = [a, b] satisfies Slice;
-    const rule = getSliceRule(slice, rules);
-    return compare(slice, rule);
-  });
-}
-
-function compare(slice: Slice, rule: Rule) {
-  if (rulePasses(rule, slice)) return 1;
-  if (ruleFails(rule, slice)) return -1;
-  return 0;
 }
 
 // --- Parsing ---
@@ -123,7 +124,9 @@ function getApplicableRules(update: Update, rules: Rule[]): Rule[] {
 function getSliceRule(slice: Slice, rules: Rule[]): Rule {
   const applicable = getApplicableRules(slice, rules);
   if (applicable.length !== 1) {
-    throw new Error(`Multiple rules found for slice ${JSON.stringify(slice)}`);
+    throw new Error(
+      `0 or multiple rules found for slice ${JSON.stringify(slice)}.`,
+    );
   }
   return applicable[0];
 }
