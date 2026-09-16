@@ -3,6 +3,7 @@ import day2 from "./puzzles/day-2/day-2.ts";
 import day3 from "./puzzles/day-3/day-3.ts";
 import day4 from "./puzzles/day-4/day-4.ts";
 import day5 from "./puzzles/day-5/day-5.ts";
+import day6 from "./puzzles/day-6/day-6.ts";
 
 type Solver = (input: string) => void;
 
@@ -12,6 +13,7 @@ const SOLUTIONS = {
   day3: [day3, "../input/day-3.txt"],
   day4: [day4, "../input/day-4.txt"],
   day5: [day5, "../input/day-5.txt"],
+  day6: [day6, "../input/day-5.txt"],
 } satisfies Record<string, [Solver, string]>;
 
 // Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
