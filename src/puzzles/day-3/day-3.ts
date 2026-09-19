@@ -79,7 +79,7 @@ export const part2 = (data: string): number => {
 };
 
 export function day3(input: string): void {
-  console.log(`   
+  console.log(`
     Day 3: \n
     - 🎆️ Part 1: ${part1(input)}\n
     - 🎇 Part 2: ${part2(input)}\n
