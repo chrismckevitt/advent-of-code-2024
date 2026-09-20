@@ -1,17 +1,18 @@
 type Orientation = typeof UP | typeof RIGHT | typeof DOWN | typeof LEFT;
-type Obstacle = typeof HASH;
-type Visited = typeof X;
-type Clear = typeof DOT;
+type Obstacle = typeof OBSTACLE;
+type Visited = typeof VISITED;
+type Clear = typeof CLEAR;
 type Cell = Obstacle | Visited | Clear | Orientation;
+type Indices = [number, number];
 
-const HASH = "#";
-const X = "X";
-const DOT = ".";
+const OBSTACLE = "#";
+const VISITED = "X";
+const CLEAR = ".";
 const UP = "^";
 const RIGHT = ">";
 const DOWN = "v";
 const LEFT = "<";
-const CELLS = [HASH, DOT, X, UP, RIGHT, DOWN, LEFT];
+const CELLS = [OBSTACLE, CLEAR, VISITED, UP, RIGHT, DOWN, LEFT];
 const ORIENTATIONS = [UP, RIGHT, DOWN, LEFT];
 
 const TEST_INPUT = `....#.....
@@ -37,19 +38,25 @@ export default function day6(_input: string) {
 }
 
 function part1(input: string): number {
-  let grid: Cell[][] = [[]];
-
-  try {
-    grid = parseGrid(input)
-  } catch {
-    return -1
-  };
-
+  const grid = parseGrid(input)
   const startIndices = findIndices(grid, ORIENTATIONS);
-  console.assert(isInBounds(grid, startIndices), `Start indices ${JSON.stringify(startIndices)} not in grid bounds.`);
   const [i, j] = startIndices;
   const startCell = grid[i][j];
-  console.assert(isOrientation(startCell), `part1: start cell orientation ${startCell} is not of type Orientation.`);
+  if (!isOrientation(startCell)) {
+    throw new Error(`startCell ${startCell} is not type Orientation.`)
+  }
+
+  const nextIndices = getNextIndicesFor(startCell, startIndices);
+  const nextCell = grid[i][j];
+  switch (nextCell) {
+    case CLEAR: {
+      // Mark prev
+    }
+    case OBSTACLE: {}
+    case VISITED: { }
+    default: throw new Error(`Cannot have multiple orientations in grid. Found ${startCell} at ${startIndices} and ${nextCell} at ${nextIndices}`);
+  }
+
   return 0;
 }
 
@@ -66,9 +73,7 @@ function parseRow(row: string): Cell[] {
 }
 
 function parseCell(cell: string): Cell {
-  console.assert(isCell(cell), `parseCell: cell ${cell} is not of type Cell`);
-
-  if (!isCell(cell)) {
+if (!isCell(cell)) {
     throw new Error(`parseCell: cell ${cell} is not of type Cell`);
   }
 
@@ -78,7 +83,7 @@ function parseCell(cell: string): Cell {
 function findIndices(
   grid: Cell[][],
   cells: string[],
-): [number, number] {
+): Indices {
   const rowIndex = findRowIndex(grid, cells);
   const row = grid[rowIndex];
   const colIndex = findColIndex(row, cells);
@@ -93,10 +98,10 @@ function findColIndex(row: Cell[], cells: string[]): number {
   return row.findIndex((cell) => cells.includes(cell));
 }
 
-function getNextIndices(
-  current: [number, number],
+function getNextIndicesFor(
   orientation: Orientation,
-): [number, number] {
+  current: Indices,
+): Indices {
   const [i, j] = current;
   switch (orientation) {
     case "^":
@@ -119,18 +124,18 @@ function isOrientation(cell: Cell): cell is Orientation {
 }
 
 function isObstacle(cell: Cell): cell is Obstacle {
-  return cell === HASH;
+  return cell === OBSTACLE;
 }
 
 function isClear(cell: Cell): cell is Clear {
-  return cell === DOT;
+  return cell === CLEAR;
 }
 
 function isVisited(cell: Cell): cell is Visited {
-  return cell === X;
+  return cell === VISITED;
 }
 
-function isInBounds(grid: Cell[][], indices: [number, number]) {
+function isInBounds(grid: Cell[][], indices: Indices) {
   const [i, j] = indices;
   if (i < 0) return false;
   if (j < 0) return false;
