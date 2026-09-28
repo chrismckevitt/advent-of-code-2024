@@ -25,11 +25,6 @@ const TEST_INPUT = `....#.....
 ........#.
 #.........
 ......#...`;
-
-// Out of bounds
-// [-1][n] || [n][-1]
-//
-
 export default function day6(_input: string) {
   console.log(`
     Day 6: \n
@@ -37,27 +32,77 @@ export default function day6(_input: string) {
     `);
 }
 
+
 function part1(input: string): number {
   const grid = parseGrid(input)
-  const startIndices = findIndices(grid, ORIENTATIONS);
-  const [i, j] = startIndices;
-  const startCell = grid[i][j];
-  if (!isOrientation(startCell)) {
-    throw new Error(`startCell ${startCell} is not type Orientation.`)
+  const game = new Game(grid);
+
+  while (!game.isOutOfBounds) {
+    game.step();
   }
 
-  const nextIndices = getNextIndicesFor(startCell, startIndices);
-  const nextCell = grid[i][j];
-  switch (nextCell) {
-    case CLEAR: {
-      // Mark prev
+  return game.countVisited();
+}
+
+class Game {
+  grid: Cell[][];
+  currentPos: Indices;
+  currentOrientation: Orientation;
+  isOutOfBounds: boolean = false; // Domain-specific state
+
+  constructor(grid: Cell[][]) {
+    this.grid = grid;
+    this.currentPos = findIndices(this.grid, ORIENTATIONS);
+
+    const [i, j] = this.currentPos;
+    const startCell = this.grid[i][j];
+
+    // Safely narrow the type using your predicate!
+    if (!isOrientation(startCell)) {
+      throw new Error(`startCell ${startCell} is not type Orientation.`);
     }
-    case OBSTACLE: {}
-    case VISITED: { }
-    default: throw new Error(`Cannot have multiple orientations in grid. Found ${startCell} at ${startIndices} and ${nextCell} at ${nextIndices}`);
+
+    // TS now knows for a fact this is an Orientation
+    this.currentOrientation = startCell;
+
+    // Mark the starting cell as visited immediately
+    this.grid[i][j] = VISITED;
   }
 
-  return 0;
+  // Returns true if the game should continue, false if the guard left the bounds
+  step() {
+    const nextPos = getNextIndices(this.currentPos, this.currentOrientation);
+
+    // Guard Clause: Did they step off the map?
+    if (!isInBounds(this.grid, nextPos)) {
+          this.isOutOfBounds = true;
+          return;
+        }
+
+    const [nextI, nextJ] = nextPos;
+    const nextCell = this.grid[nextI][nextJ];
+
+    // Handle the logic based on the cell type
+    if (isObstacle(nextCell)) {
+      // Don't move, just rotate
+      this.currentOrientation = rotateClockwise(this.currentOrientation);
+    } else {
+      // It's CLEAR or VISITED. Move the player and mark as visited.
+      this.currentPos = nextPos;
+      this.grid[nextI][nextJ] = VISITED;
+    }
+  }
+
+  // Utility to get the final answer for Part 1
+  countVisited(): number {
+    let count = 0;
+    for (const row of this.grid) {
+      for (const cell of row) {
+        if (cell === VISITED) count++;
+      }
+    }
+    return count;
+  }
 }
 
 function parseGrid(input: string): Cell[][] {
@@ -98,9 +143,9 @@ function findColIndex(row: Cell[], cells: string[]): number {
   return row.findIndex((cell) => cells.includes(cell));
 }
 
-function getNextIndicesFor(
-  orientation: Orientation,
+function getNextIndices(
   current: Indices,
+  orientation: Orientation,
 ): Indices {
   const [i, j] = current;
   switch (orientation) {
