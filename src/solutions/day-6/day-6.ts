@@ -22,25 +22,14 @@ const clockwise: Record<Orientation, Orientation> = {
   [LEFT]: UP,
 };
 
-const TEST_INPUT = `....#.....
-.........#
-..........
-..#.......
-.......#..
-..........
-.#..^.....
-........#.
-#.........
-......#...`;
-
-export default function day6(_input: string) {
+export default function day6(input: string) {
   console.log(`
     Day 6: \n
-    - 🤮 Part 1: ${part1(TEST_INPUT)}\n
+    - 🤮 Part 1: ${part1(input)}\n
     `);
 }
 
-function part1(input: string): number {
+export function part1(input: string): number {
   const grid = parseGrid(input);
   const guard = new Guard(grid);
 
@@ -48,38 +37,42 @@ function part1(input: string): number {
     guard.step();
   }
 
-  return guard.countVisited();
+  return guard.visitedCount;
 }
 
 class Guard {
   #grid: Cell[][];
-  #currentPos: Indices;
-  #currentOrientation: Orientation;
+  #pos: Indices;
+  #orientation: Orientation;
   isInBounds: boolean = true;
 
   constructor(grid: Cell[][]) {
     this.#grid = grid;
-    this.#currentPos = findIndices(this.#grid, ORIENTATIONS);
+    this.#pos = findIndices(this.#grid, ORIENTATIONS);
 
-    if (isOutOfBounds(this.#grid, this.#currentPos)) {
+    if (isOutOfBounds(this.#grid, this.#pos)) {
       throw new Error(
-        `Starting position ${this.#currentPos} cannot be out of bounds.`,
+        `Starting position ${this.#pos} cannot be out of bounds.`,
       );
     }
 
-    const [i, j] = this.#currentPos;
+    const [i, j] = this.#pos;
     const startCell = this.#grid[i][j];
 
     if (!isOrientation(startCell)) {
       throw new Error(`Start cell ${startCell} must be of type Orientation.`);
     }
 
-    this.#currentOrientation = startCell;
+    this.#orientation = startCell;
     this.#grid[i][j] = VISITED;
   }
 
+  get visitedCount(): number {
+    return countVisited(this.#grid);
+  }
+
   step(): void {
-    const nextPos = getIndices(this.#currentPos, this.#currentOrientation);
+    const nextPos = getIndices(this.#pos, this.#orientation);
 
     if (isOutOfBounds(this.#grid, nextPos)) {
       this.isInBounds = false;
@@ -92,42 +85,30 @@ class Guard {
     if (isOrientation(nextCell)) {
       throw new Error("Next cell cannot be of type Orientation.");
     } else if (isObstacle(nextCell)) {
-      this.#currentOrientation = rotateClockwise(this.#currentOrientation);
+      this.#orientation = rotateClockwise(this.#orientation);
     } else {
-      this.#currentPos = nextPos;
+      this.#pos = nextPos;
       this.#grid[l][k] = VISITED;
     }
-  }
-
-  countVisited(): number {
-    let count = 0;
-    for (const row of this.#grid) {
-      for (const cell of row) {
-        if (isVisited(cell)) count++;
-      }
-    }
-    return count;
   }
 }
 
 function parseGrid(input: string): Cell[][] {
   const rows = input.split("\n");
-
   return rows.map(parseRow);
 }
 
 function parseRow(row: string): Cell[] {
   const cell = row.split("");
-
   return cell.map(parseCell);
 }
 
 function parseCell(cell: string): Cell {
-  if (!isCell(cell)) {
+  if (isCell(cell)) {
+    return cell;
+  } else {
     throw new Error(`parseCell: cell ${cell} is not of type Cell`);
   }
-
-  return cell;
 }
 
 function findIndices(
@@ -162,6 +143,8 @@ function getIndices(
       return [i + 1, j];
     case "<":
       return [i, j - 1];
+    default:
+      throw new Error(`Unknown orientation ${orientation}.`);
   }
 }
 
@@ -176,19 +159,28 @@ function isOrientation(cell: Cell): cell is Orientation {
 function isObstacle(cell: Cell): cell is Obstacle {
   return cell === OBSTACLE;
 }
+
 function isVisited(cell: Cell): cell is Visited {
   return cell === VISITED;
 }
 
 function isOutOfBounds(grid: Cell[][], indices: Indices) {
   const [i, j] = indices;
-  if (i < 0) return true;
-  if (j < 0) return true;
-  if (i >= grid.length) return true;
-  if (j >= grid[i].length) return true;
+  if (i < 0 || j < 0) return true;
+  if (i >= grid.length || j >= grid[i].length) return true;
   return false;
 }
 
 function rotateClockwise(current: Orientation): Orientation {
   return clockwise[current];
+}
+
+function countVisited(grid: Cell[][]): number {
+  let count = 0;
+  for (const row of grid) {
+    for (const cell of row) {
+      if (isVisited(cell)) count++;
+    }
+  }
+  return count;
 }
